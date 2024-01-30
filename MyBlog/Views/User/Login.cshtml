@@ -1,0 +1,29 @@
+﻿@model MyBlog.BLL.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.10/jquery.validate.unobtrusive.min.js"></script>
+
+<form method="post" asp-controller="User" asp-action="Login">
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Электронный адрес</label>
+        <input asp-for="Email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Пароль</label>
+        <input asp-for="Password" type="password" class="form-control" id="exampleInputPassword1">
+        <span asp-validation-for="Password" class="text-danger"></span>
+        <div id="passwordHelpBlock" class="form-text">Ваш пароль должен содержать буквы разного регистра, цифры и специальные символы</div>
+    </div>
+    <div class="mb-3 form-check">
+        <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="exampleCheck1">
+        <label class="form-check-label" for="exampleCheck1">Запомнить меня</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Войти</button>
+    <div>
+        Еще нет аккаунта? <a class="link-primary" asp-area="" asp-controller="User" asp-action="RegisterPage">Зарегистрируйтесь</a>
+    </div>
+</form>

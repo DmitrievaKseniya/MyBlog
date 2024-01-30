@@ -1,18 +1,25 @@
-﻿using System;
+﻿using MyBlog.BLL.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.ViewModels
+namespace MyBlog.BLL.ViewModels
 {
-    public class NewArticleViewModel
+    public class ArticleNewViewModel
     {
         [Required(ErrorMessage = "Поле ID пользователя обязательно для заполнения")]
         [DataType(DataType.Text)]
         [Display(Name = "ИД пользователя", Prompt = "Введите ИД пользователя")]
-        public string IdUser { get; set; }
+        public string UserId { get; set; }
+
+        public List<Tag> AllTags { get; set; }
+
+        [Required(ErrorMessage = "Необходимо выбрать хотя бы один тэг")]
+        [Display(Name = "Список тэгов")]
+        public List<int> SelectedIdTags { get; set; }
 
         [Required(ErrorMessage = "Поле Заголовок обязательно для заполнения")]
         [DataType(DataType.Text)]

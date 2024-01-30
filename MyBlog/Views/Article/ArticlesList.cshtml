@@ -1,0 +1,50 @@
+﻿@model MyBlog.BLL.ViewModels.ArticlesListViewModel[];
+
+@{
+    ViewData["Title"] = "Articles";
+}
+
+<h3>Все статьи</h3>
+@if (User.Identity!.IsAuthenticated)
+{
+    <a class="text-primary text-decoration-none" asp-area="" asp-controller="Article" asp-action="NewArticlePage">Добавить статью</a>
+}
+<br />
+<div class="row gy-2">
+    @foreach (var article in Model)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="text-primary text-decoration-none" asp-area="" asp-controller="Article" asp-action="ViewArticle" asp-route-id="@article.ArticlesList.Id">
+                        @article.ArticlesList.Title
+                    </a>
+                </h5>
+                <p>
+                    @foreach (var tag in article.ArticlesList.Tags)
+                    {
+                        <span class="badge rounded-pill bg-primary">@tag.Name</span>
+                    }
+                </p>
+                @if (User.IsInRole("admin") || User.IsInRole("moderator"))
+                {
+                    <div class="row g-3">
+                        <div class="col-auto">
+                            <form method="get" asp-controller="Article" asp-action="EditArticle" asp-route-id="@article.ArticlesList.Id">
+                                <button class="btn btn-outline-dark btn-sm">Изменить</button>
+                            </form>
+                        </div>
+                        <div class="col-auto">
+                            <form method="post" asp-controller="Article" asp-action="DeleteArticle" asp-route-id="@article.ArticlesList.Id">
+                                <button class="btn btn-outline-danger btn-sm">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                <div class="col-auto col-md-6 offset-md-4 text-end text-secondary">
+                    Автор: @article.ArticlesList.Author.Email
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,11 +1,11 @@
-﻿using BusinessLogicLayer.Models;
+﻿using MyBlog.BLL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.ViewModels
+namespace MyBlog.BLL.ViewModels
 {
     public class UserViewModel
     {
@@ -15,5 +15,13 @@ namespace BusinessLogicLayer.ViewModels
         {
             User = user;
         }
+        public List<Role> Roles { get; set; }
+
+        public UserViewModel(User user, List<Role> roles) : this(user)
+        {
+            Roles = roles;
+        }
+
+        public List<Article>? Articles { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.Models
+namespace MyBlog.BLL.Models
 {
     public class User : IdentityUser
     {
@@ -13,5 +13,10 @@ namespace BusinessLogicLayer.Models
         public string LastName { get; set; }
         public string? MiddleName { get; set; }
         public DateTime BirthDate { get; set; }
+
+        public string GetFullName()
+        {
+            return LastName + " " + FirstName + " " + MiddleName;
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Repository
+namespace MyBlog.DAL.Repository
 {
     public interface IRepository<T> where T : class
     {

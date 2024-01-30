@@ -1,7 +1,7 @@
-﻿using BusinessLogicLayer.Models;
-using BusinessLogicLayer.ViewModels;
+﻿using MyBlog.BLL.Models;
+using MyBlog.BLL.ViewModels;
 
-namespace MyBlog.Extentions
+namespace MyBlog.WebService.Extentions
 {
     public static class TagFromModel
     {

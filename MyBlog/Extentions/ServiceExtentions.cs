@@ -1,7 +1,7 @@
-﻿using DataAccessLayer.Repository;
-using DataAccessLayer.UoW;
+﻿using MyBlog.DAL.Repository;
+using MyBlog.DAL.UoW;
 
-namespace MyBlog.Extentions
+namespace MyBlog.WebService.Extentions
 {
     public static class ServiceExtentions
     {

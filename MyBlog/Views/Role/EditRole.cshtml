@@ -1,0 +1,21 @@
+﻿@model MyBlog.BLL.ViewModels.RoleEditViewModel
+
+@{
+    ViewData["Title"] = "Edit role";
+}
+
+<form method="post" asp-controller="Role" asp-action="UpdateRole">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div class="mb-3">
+        <input type="hidden" asp-for="IdRole">
+        <label for="inputName" class="form-label">Название</label>
+        <input asp-for="Name" class="form-control" id="inputName">
+        <span asp-validation-for="Name" class="text-danger"></span>
+        <label for="inputDescription" class="form-label">Описание</label>
+        <input asp-for="Description" class="form-control" id="inputDescription">
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+<br />
+<a class="link-primary text-decoration-none" asp-area="" asp-controller="Role" asp-action="GetAllRoles">Перейти к списку всех ролей</a>

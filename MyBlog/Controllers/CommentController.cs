@@ -1,22 +1,24 @@
-﻿using BusinessLogicLayer.Models;
-using BusinessLogicLayer.ViewModels;
-using DataAccessLayer.Repository;
-using DataAccessLayer.UoW;
+﻿using MyBlog.BLL.Models;
+using MyBlog.BLL.ViewModels;
+using MyBlog.DAL.Repository;
+using MyBlog.DAL.UoW;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MyBlog.Extentions;
+using MyBlog.WebService.Extentions;
 
-namespace MyBlog.Controllers
+namespace MyBlog.WebService.Controllers
 {
     public class CommentController : Controller
     {
         private readonly UserManager<User> _userManager;
         private IUnitOfWork _unitOfWork;
+        private CommentRepository _repository;
 
         public CommentController(UserManager<User> userManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
+            _repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
         }
 
         [Route ("NewComment")]
@@ -30,11 +32,12 @@ namespace MyBlog.Controllers
             var item = new Comment()
             {
                 Text = newComment.Text,
-                Author = result,
+                AuthorId = result.Id,
+                ArticleId = newComment.IdArticle
             };
             await repository.Create(item);
 
-            return View();
+            return RedirectToAction("ViewArticle", "Article");
         }
 
         [Route ("UpdateComment")]
@@ -99,6 +102,11 @@ namespace MyBlog.Controllers
             var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
 
             return await repository.Get(id);
+        }
+
+        public async Task<List<Comment>> GetCommentsByArticleId(int id)
+        {
+            return await _repository.GetByArticleId(id);
         }
     }
 }

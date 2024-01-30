@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.ViewModels
+namespace MyBlog.BLL.ViewModels
 {
     public class CommentEditViewModel
     {

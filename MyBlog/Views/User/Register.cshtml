@@ -1,0 +1,36 @@
+﻿@model MyBlog.BLL.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<form method="post" asp-controller="User" asp-action="Register">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div class="mb-3">
+        <label for="inputName" class="form-label">Имя</label>
+        <input asp-for="FirstName" class="form-control" id="inputName">
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="inputLastName" class="form-label">Фамилия</label>
+        <input asp-for="LastName" class="form-control" id="inputLastName">
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="inputEmail" class="form-label">Электронный адрес</label>
+        <input asp-for="EmailReg" class="form-control" id="inputEmail" aria-describedby="emailHelp">
+        <span asp-validation-for="EmailReg" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="inputPassword" class="form-label">Пароль</label>
+        <input asp-for="PasswordReg" class="form-control" id="inputPassword">
+        <span asp-validation-for="PasswordReg" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="inputPasswordConfirm" class="form-label">Подтвердите пароль</label>
+        <input asp-for="PasswordConfirm" class="form-control" id="inputPasswordConfirm">
+        <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+        <div id="passwordHelpBlock" class="form-text">Обязательно подтвердите Ваш пароль</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+</form>

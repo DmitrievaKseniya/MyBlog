@@ -1,12 +1,13 @@
-﻿using BusinessLogicLayer.Models;
+﻿using MyBlog.BLL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
-namespace DataAccessLayer.Repository
+namespace MyBlog.DAL.Repository
 {
     public class CommentRepository : Repository<Comment>
     {
@@ -14,14 +15,21 @@ namespace DataAccessLayer.Repository
 
         public async override Task<List<Comment>> GetAll()
         {
-            var comments = Set.Include(x => x.Author).ToListAsync();
+            var comments = Set.Include(x => x.Author).Include(x => x.Article).ToListAsync();
+
+            return await comments;
+        }
+
+        public async Task<List<Comment>> GetByArticleId(int id)
+        {
+            var comments = Set.Include(x => x.Author).Where(x => x.ArticleId == id).ToListAsync();
 
             return await comments;
         }
 
         public async override Task<Comment> Get(int id)
         {
-            var comment = Set.Include(x => x.Author).FirstOrDefaultAsync(x => x.Id == id);
+            var comment = Set.Include(x => x.Author).Include(x => x.Article).FirstAsync(x => x.Id == id);
 
             return await comment;
         }

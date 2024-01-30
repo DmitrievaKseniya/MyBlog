@@ -1,0 +1,33 @@
+﻿@model MyBlog.BLL.ViewModels.ArticleViewModel
+
+@{
+    ViewData["Title"] = "Article";
+}
+
+<h3>@Model.Article.Title</h3>
+<p>
+    @foreach (var tag in Model.Article.Tags)
+    {
+        <span class="badge rounded-pill bg-primary">@tag.Name</span>
+    }
+</p>
+<p class="border-top lh-base">@Model.Article.Text</p>
+<div class="text-end text-secondary border-top">
+    Автор: @Model.Article.Author.Email
+</div>
+@* <h4>Комментарии к статье</h4>
+<div>
+    @foreach (var comment in Model.Comments)
+    {
+        <input type="text" readonly class="form-control-plaintext" value="@comment.Text">
+        <div class="text-end text-secondary border-top">
+            Автор: @comment.Author.Email
+        </div>
+    }
+</div>
+<div>
+    @{
+        Html.Partial("NewComment", Model.NewCommentVM);
+    }
+</div> *@
+<a class="link-primary text-decoration-none" asp-area="" asp-controller="Article" asp-action="GetAllArticle">Перейти к списку всех статей</a>

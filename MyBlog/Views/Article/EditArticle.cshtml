@@ -1,0 +1,40 @@
+﻿@model MyBlog.BLL.ViewModels.ArticleEditViewModel
+
+@{
+    ViewData["Title"] = "Edit article";
+}
+
+<h3>Добавление статьи</h3>
+<form method="post" asp-controller="Article" asp-action="UpdateArticle">
+    <div asp-validation-summary="ModelOnly"></div>
+    <input type="hidden" asp-for="IdArticle">
+    <div class="mb-3">
+        @foreach (var tag in Model.AllTags)
+        {
+            <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" name="SelectedIdTags" value="@tag.Id"
+                    @if (Model.SelectedTags.Contains(tag))
+                    {
+                        <text>checked</text>
+                    }
+                    />
+                    @tag.Name
+                </label>
+            </div>
+        }
+    </div>
+    <div class="mb-3">
+        <label for="inputTitle" class="form-label">Заголовок</label>
+        <input asp-for="Title" class="form-control" id="inputTitle">
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="inputText" class="form-label">Контент</label>
+        <textarea asp-for="Text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        <span asp-validation-for="Text" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+<br />
+<a class="link-primary text-decoration-none" asp-area="" asp-controller="Article" asp-action="GetAllArticle">Перейти к списку всех статей</a>

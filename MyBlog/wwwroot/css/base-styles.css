@@ -1,0 +1,16 @@
+﻿.a_text_decoration {
+    text-decoration: none;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.display_flex {
+    flex: 1;
+}

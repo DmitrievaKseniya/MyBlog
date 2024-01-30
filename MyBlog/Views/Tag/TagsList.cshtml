@@ -1,0 +1,35 @@
+﻿@model MyBlog.BLL.ViewModels.TagsListViewModel[];
+
+@{
+    ViewData["Title"] = "Tags";
+}
+
+<h3>Все теги</h3>
+<a class="text-primary text-decoration-none" asp-area="" asp-controller="Tag" asp-action="NewTagPage">Добавить тег</a>
+<br/>
+<div class="row gy-2">
+    @foreach (var tag in Model)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@tag.TagsList.Name</h5>
+                <div class="row g-3">
+                    <div class="col-auto">
+                        <form method="get" asp-controller="Tag" asp-action="GetTagById" asp-route-id="@tag.TagsList.Id">
+                            <button class="btn btn-outline-dark btn-sm">Изменить</button>
+                        </form>
+                    </div>
+                    <div class="col-auto">
+                        <form method="post" asp-controller="Tag" asp-action="DeleteTag" asp-route-id="@tag.TagsList.Id">
+                            <button class="btn btn-outline-danger btn-sm">Удалить</button>
+                        </form>
+                    </div>
+                    <div class="col-auto col-md-6 offset-md-4 text-end text-secondary">
+                        Статей по тегу: @tag.NumberArticles
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

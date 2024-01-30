@@ -1,36 +1,49 @@
-﻿using BusinessLogicLayer.Models;
-using BusinessLogicLayer.ViewModels;
-using DataAccessLayer.Repository;
-using DataAccessLayer.UoW;
+﻿using MyBlog.BLL.Models;
+using MyBlog.BLL.ViewModels;
+using MyBlog.DAL.Repository;
+using MyBlog.DAL.UoW;
 using Microsoft.AspNetCore.Mvc;
-using MyBlog.Extentions;
+using MyBlog.WebService.Extentions;
+using Microsoft.AspNetCore.Authorization;
 
-namespace MyBlog.Controllers
+namespace MyBlog.WebService.Controllers
 {
     public class TagController : Controller
     {
         private IUnitOfWork _unitOfWork;
+        private TagRepository _repository;
 
         public TagController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+            _repository = _unitOfWork.GetRepository<Tag>() as TagRepository;
         }
 
+        [Authorize(Roles = "moderator, admin")]
         [Route ("NewTag")]
         [HttpPost]
         public async Task<IActionResult> NewTag(TagNewViewModel newTag)
         {
-            var repository = _unitOfWork.GetRepository<Tag>() as TagRepository;
-
             var item = new Tag()
             {
                 Name = newTag.Name,
             };
-            await repository.Create(item);
+            await _repository.Create(item);
 
-            return View();
+            return RedirectToAction("GetAllTags", "Tag");
         }
 
+        [Authorize(Roles = "moderator, admin")]
+        [Route ("NewTagPage")]
+        [HttpGet]
+        public async Task<IActionResult> NewTagPage()
+        {
+            var model = new TagNewViewModel();
+
+            return View("NewTag", model);
+        }
+
+        [Authorize(Roles = "moderator, admin")]
         [Route ("UpdateTag")]
         [HttpPost]
         public async Task<IActionResult> UpdateTag(TagEditViewModel model)
@@ -40,12 +53,10 @@ namespace MyBlog.Controllers
                 var tag = await GetTagByIdRep(model.IdTag);
 
                 tag.Convert(model);
+                
+                await _repository.Update(tag);
 
-                var repository = _unitOfWork.GetRepository<Tag>() as TagRepository;
-
-                await repository.Update(tag);
-
-                return View();
+                return RedirectToAction("GetAllTags", "Tag");
 
             }
             else
@@ -55,44 +66,55 @@ namespace MyBlog.Controllers
             }
         }
 
+        [Authorize(Roles = "moderator, admin")]
         [Route ("DeleteTag")]
         [HttpPost]
         public async Task<IActionResult> DeleteTag(int id)
         {
             var tag = await GetTagByIdRep(id);
 
-            var repository = _unitOfWork.GetRepository<Tag>() as TagRepository;
+            await _repository.Delete(tag);
 
-            repository.Delete(tag);
-
-            return View();
+            return RedirectToAction("GetAllTags", "Tag");
         }
 
-        [Route ("GetAllTags")]
+        [Authorize(Roles = "moderator, admin")]
+        [Route("GetAllTags")]
         [HttpGet]
         public async Task<IActionResult> GetAllTags()
         {
-            var repository = _unitOfWork.GetRepository<Tag>() as TagRepository;
+            var tags = await _repository.GetAllTagsWithArticles();
 
-            var tags = repository.GetAll();
+            var model = tags
+                .Select(x => new TagsListViewModel()
+                {
+                    TagsList = x,
+                    NumberArticles = x.Articles.Count
+                })
+                .ToArray();
 
-            return View(tags);
+            return View("TagsList", model);
         }
 
-        [Route ("GetTagById")]
+        [Authorize(Roles = "moderator, admin")]
+        [Route ("GetTagById/{id}")]
         [HttpGet]
         public async Task<IActionResult> GetTagById(int id)
         {
             var tag = await GetTagByIdRep(id);
 
-            return View(tag);
+            var model = new TagEditViewModel()
+            {
+                IdTag = tag.Id,
+                Name = tag.Name,
+            };
+
+            return View("EditTag", model);
         }
 
         public async Task<Tag> GetTagByIdRep(int id)
         {
-            var repository = _unitOfWork.GetRepository<Tag>() as TagRepository;
-
-            return await repository.Get(id);
+           return await _repository.Get(id);
         }
     }
 }

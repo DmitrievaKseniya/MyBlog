@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.ViewModels
+namespace MyBlog.BLL.ViewModels
 {
     public class CommentNewViewModel
     {
@@ -17,5 +17,10 @@ namespace BusinessLogicLayer.ViewModels
         [DataType(DataType.Text)]
         [Display(Name = "Комментарий", Prompt = "Напишите ваш комментарий")]
         public string Text { get; set; }
+
+        [Required(ErrorMessage = "Поле ID статьи обязательно для заполнения")]
+        [DataType(DataType.Text)]
+        [Display(Name = "ИД статьи", Prompt = "Введите ИД статьи")]
+        public int IdArticle { get; set; }
     }
 }

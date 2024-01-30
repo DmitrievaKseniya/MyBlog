@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Repository
+namespace MyBlog.DAL.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {

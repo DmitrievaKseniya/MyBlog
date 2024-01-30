@@ -1,0 +1,12 @@
+﻿@model MyBlog.BLL.ViewModels.CommentNewViewModel
+
+<form method="post" asp-controller="Comment" asp-action="NewComment">
+    <div asp-validation-summary="ModelOnly"></div>
+    <input type="hidden" asp-for="IdUser">
+    <input type="hidden" asp-for="IdArticle">
+    <div class="mb-3">
+        <input asp-for="Text" class="form-control" id="inputText">
+        <span asp-validation-for="Text" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить комментарий</button>
+</form>

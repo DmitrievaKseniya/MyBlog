@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlog", "MyBlog\MyBlog.csproj", "{419370B6-9AFA-4DDE-B9FA-679475783C20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebService", "MyBlog\WebService.csproj", "{419370B6-9AFA-4DDE-B9FA-679475783C20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogicLayer", "BusinessLogicLayer\BusinessLogicLayer.csproj", "{D9920666-51D6-4533-BDB4-2471B92E247B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BLL", "BusinessLogicLayer\BLL.csproj", "{D9920666-51D6-4533-BDB4-2471B92E247B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{06FF9CBD-7C52-4F9E-AFBF-D3E1E42A5994}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DataAccessLayer\DAL.csproj", "{06FF9CBD-7C52-4F9E-AFBF-D3E1E42A5994}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

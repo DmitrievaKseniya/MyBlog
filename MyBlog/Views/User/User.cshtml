@@ -1,0 +1,72 @@
+﻿@model MyBlog.BLL.ViewModels.UserViewModel
+
+@{
+    ViewData["Title"] = "User";
+}
+
+<h3>@Model.User.GetFullName()</h3>
+<p>
+    @foreach (var role in Model.Roles)
+    {
+        <span class="badge rounded-pill bg-primary">@role.Name</span>
+    }
+</p>
+<div class="border-top border-bottom mb-3 mt-3">
+    <div>
+        <label class="text-muted">Дата рождения:</label>
+        <label>@Model.User.BirthDate.ToLongDateString()</label>
+    </div>
+    <div>
+        <label class="text-muted">Email:</label>
+        <label>@Model.User.Email</label>
+    </div>
+    <div class="row g-3 mt-0 mb-3">
+        <div class="col-auto">
+            <form method="get" asp-controller="User" asp-action="Edit">
+                <button class="btn btn-outline-dark btn-sm">Изменить</button>
+            </form>
+        </div>
+        <div class="col-auto">
+            <form method="post" asp-controller="User" asp-action="DeleteUser">
+                <button class="btn btn-outline-danger btn-sm">Удалить</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<h5>Мои статьи</h5>
+<div class="row gy-2 mb-3 mt-3">
+    @foreach (var article in Model.Articles)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="text-primary text-decoration-none" asp-area="" asp-controller="Article" asp-action="ViewArticle" asp-route-id="@article.Id">
+                        @article.Title
+                    </a>
+                </h5>
+                <p>
+                    @foreach (var tag in article.Tags)
+                    {
+                        <span class="badge rounded-pill bg-primary">@tag.Name</span>
+                    }
+                </p>
+                <div class="row g-3">
+                    <div class="col-auto">
+                        <form method="get" asp-controller="Article" asp-action="EditArticle" asp-route-id="@article.Id">
+                            <button class="btn btn-outline-dark btn-sm">Изменить</button>
+                        </form>
+                    </div>
+                    <div class="col-auto">
+                        <form method="post" asp-controller="Article" asp-action="DeleteArticle" asp-route-id="@article.Id">
+                            <button class="btn btn-outline-danger btn-sm">Удалить</button>
+                        </form>
+                    </div>
+                    <div class="col-auto col-md-6 offset-md-4 text-end text-secondary">
+                        Автор: @article.Author.Email
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

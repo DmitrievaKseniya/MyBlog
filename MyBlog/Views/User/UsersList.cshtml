@@ -1,0 +1,50 @@
+﻿@model MyBlog.BLL.ViewModels.UserViewModel[];
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h3>Все пользователи</h3>
+@if (User.IsInRole("admin"))
+{
+    <a class="text-primary text-decoration-none" asp-area="" asp-controller="User" asp-action="NewUserPage">Добавить пользователя</a>
+}
+<br />
+<div class="row gy-2">
+    @foreach (var user in Model)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="text-primary text-decoration-none" asp-area="" asp-controller="User" asp-action="UserPage" asp-route-id="@user.User.Id">
+                        @user.User.GetFullName()
+                    </a>
+                </h5>
+                <p>
+                    @foreach (var role in user.Roles)
+                    {
+                        <span class="badge rounded-pill bg-primary">@role.Name</span>
+                    }
+                </p>
+                <div class="mb-4 text-secondary">
+                    @user.User.Email
+                </div>
+                @if (User.IsInRole("admin"))
+                {
+                    <div class="row g-3">
+                        <div class="col-auto">
+                            <form method="get" asp-controller="User" asp-action="EditFromUserList" asp-route-id="@user.User.Id">
+                                <button class="btn btn-outline-dark btn-sm">Изменить</button>
+                            </form>
+                        </div>
+                        <div class="col-auto">
+                            <form method="post" asp-controller="User" asp-action="DeleteUserFromUserList" asp-route-id="@user.User.Id">
+                                <button class="btn btn-outline-danger btn-sm">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

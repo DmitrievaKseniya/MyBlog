@@ -1,0 +1,18 @@
+﻿@model MyBlog.BLL.ViewModels.TagEditViewModel
+
+@{
+    ViewData["Title"] = "Edit tag";
+}
+
+<form method="post" asp-controller="Tag" asp-action="UpdateTag">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div class="mb-3">
+        <input type="hidden" asp-for="IdTag">
+        <label for="inputName" class="form-label">Название</label>
+        <input asp-for="Name" class="form-control" id="inputName">
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+<br />
+<a class="link-primary text-decoration-none" asp-area="" asp-controller="Tag" asp-action="GetAllTags">Перейти к списку всех тегов</a>

@@ -1,48 +1,106 @@
 ﻿using AutoMapper;
-using BusinessLogicLayer.Models;
-using BusinessLogicLayer.ViewModels;
-using DataAccessLayer.Repository;
-using DataAccessLayer.UoW;
+using MyBlog.BLL.Models;
+using MyBlog.BLL.ViewModels;
+using MyBlog.DAL.Repository;
+using MyBlog.DAL.UoW;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MyBlog.Extentions;
+using MyBlog.WebService.Extentions;
+using Microsoft.AspNetCore.Authorization;
 
-namespace MyBlog.Controllers
+namespace MyBlog.WebService.Controllers
 {
+    [Route("[controller]/[action]")]
     public class ArticleController : Controller
     {
         private readonly UserManager<User> _userManager;
         private IUnitOfWork _unitOfWork;
+        private ArticleRepository _repository;
 
         public ArticleController(UserManager<User> userManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
+            _repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
         }
 
+        [Route("ViewArticle")]
+        [HttpGet]
+        public async Task<IActionResult> ViewArticle(int id)
+        {
+            var thisUser = User;
+            var resultUser = await _userManager.GetUserAsync(thisUser);
+
+            var article = await GetArticleById(id);
+
+            var model = new ArticleViewModel(article);
+
+            var repostoryComments = _unitOfWork.GetRepository<Comment>() as CommentRepository;
+
+            var comments = await repostoryComments.GetByArticleId(id);
+
+            model.Comments = comments;
+            model.NewCommentVM = new CommentNewViewModel()
+            {
+                IdUser = resultUser.Id,
+                IdArticle = id
+            };
+
+            return View("Article", model);
+        }
+
+        [Authorize]
         [Route("NewArticle")]
         [HttpPost]
-        public async Task<IActionResult> NewArticle(NewArticleViewModel newArticle)
+        public async Task<IActionResult> NewArticle(ArticleNewViewModel newArticle)
         {
-            //var thisUser = User;
+            var thisUser = User;
 
-            //var result = await _userManager.GetUserAsync(thisUser);
+            var result = await _userManager.GetUserAsync(thisUser);
 
-            var result = await _userManager.FindByIdAsync(newArticle.IdUser);
+            var repositiryTag = _unitOfWork.GetRepository<Tag>() as TagRepository;
 
-            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            var selectedTags = new List<Tag>();
+            foreach (int idTag in newArticle.SelectedIdTags)
+            {
+                selectedTags.Add(await repositiryTag.Get(idTag));
+            }
 
             var item = new Article()
             {
                 Title = newArticle.Title,
                 Text = newArticle.Text,
+                AuthorId = newArticle.UserId,
                 Author = result,
                 DateTimeArticle = DateTime.Now,
+                Tags = selectedTags
             };
-            await repository.Create(item);
+            await _repository.Create(item);
 
-            return View();
+            return RedirectToAction("GetAllArticle", "Article");
+        }
+
+        [Authorize]
+        [Route("NewArticlePage")]
+        [HttpGet]
+        public async Task<IActionResult> NewArticlePage()
+        {
+            var thisUser = User;
+
+            var result = await _userManager.GetUserAsync(thisUser);
+
+            var repositiryTag = _unitOfWork.GetRepository<Tag>() as TagRepository;
+
+            var AllTags = await repositiryTag.GetAll();
+
+            var model = new ArticleNewViewModel()
+            {
+                AllTags = AllTags,
+                UserId = result.Id
+            };
+
+            return View("NewArticle", model);
         }
 
         [Route("UpdateArticle")]
@@ -53,14 +111,19 @@ namespace MyBlog.Controllers
             {
                 var article = await GetArticleById(model.IdArticle);
 
-                article.Convert(model);
+                var repositiryTag = _unitOfWork.GetRepository<Tag>() as TagRepository;
 
-                var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+                var selectedTags = new List<Tag>();
+                foreach (int idTag in model.SelectedIdTags)
+                {
+                    selectedTags.Add(await repositiryTag.Get(idTag));
+                }
 
-                await repository.Update(article);
+                article.Convert(model, selectedTags);
 
-                return View();
+                await _repository.Update(article);
 
+                return RedirectToAction("GetAllArticle", "Article");
             }
             else
             {
@@ -69,46 +132,72 @@ namespace MyBlog.Controllers
             }
         }
 
+        [Route("EditArticle/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> EditArticle(int id)
+        {
+            var article = await GetArticleById(id);
+
+            var SelectedTags = new List<Tag>();
+            foreach (Tag tag in article.Tags)
+            {
+                SelectedTags.Add(tag);
+            }
+
+            var repositiryTag = _unitOfWork.GetRepository<Tag>() as TagRepository;
+            var AllTags = await repositiryTag.GetAll();
+
+            var model = new ArticleEditViewModel()
+            {
+                IdArticle = article.Id,
+                AllTags = AllTags,
+                SelectedTags = SelectedTags,
+                Title = article.Title,
+                Text = article.Text
+            };
+
+            return View("EditArticle", model);
+
+        }
+
         [Route("DeleteArticle")]
         [HttpPost]
         public async Task<IActionResult> DeleteArticle(int id)
         {
             var article = await GetArticleById(id);
 
-            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            _repository.Delete(article);
 
-            repository.Delete(article);
-
-            return View();
+            return RedirectToAction("GetAllArticle");
         }
 
-        [Route("GetAllArticle")]
         [HttpGet]
         public async Task<IActionResult> GetAllArticle()
         {
-            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            var articles = await _repository.GetAll();
 
-            var articles = repository.GetAll();
+            var model = articles
+                .Select(x => new ArticlesListViewModel()
+                {
+                    ArticlesList = x
+                })
+                .ToArray();
 
-            return View(articles);
+            return View("ArticlesList", model);
         }
 
         [Route ("GetArticleByUserId")]
         [HttpGet]
         public async Task<IActionResult> GetArticleByUserId(string userId)
         {
-            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
-
-            var articles = repository.GetArticlesByUserId(userId);
+            var articles = _repository.GetArticlesByUserId(userId);
 
             return View(articles);
         }
 
         public async Task<Article> GetArticleById(int id)
         {
-            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
-
-            return await repository.Get(id);
+            return await _repository.Get(id);
         }
     }
 }

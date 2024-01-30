@@ -1,13 +1,14 @@
 using AutoMapper;
-using BusinessLogicLayer.Models;
-using DataAccessLayer;
+using MyBlog.BLL.Models;
+using MyBlog.DAL;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MyBlog;
+using MyBlog.WebService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyBlog.Extentions;
-using DataAccessLayer.Repository;
+using MyBlog.WebService.Extentions;
+using MyBlog.DAL.Repository;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +25,20 @@ IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddRazorPages();
 builder.Services.AddMvc().AddRazorRuntimeCompilation();
 
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, Role>(opts => {
+        opts.Password.RequiredLength = 5;
+        opts.Password.RequireNonAlphanumeric = false;
+        opts.Password.RequireLowercase = false;
+        opts.Password.RequireUppercase = false;
+        opts.Password.RequireDigit = false;
+    })
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.ConfigureApplicationCookie(optons =>
+{
+    optons.LoginPath = "/User/Login";
+    optons.AccessDeniedPath = "/Home/ErrorForbidden";
+});
 
 builder.Services.AddSingleton(mapper);
 
@@ -45,18 +58,18 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var userManager = services.GetRequiredService<UserManager<User>>();
-        var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        if (!(await rolesManager.RoleExistsAsync("employee")))
+        var roleManager = services.GetRequiredService<RoleManager<Role>>();
+        if (!(await roleManager.RoleExistsAsync("employee")))
         {
-            await rolesManager.CreateAsync(new IdentityRole("employee"));
+            await roleManager.CreateAsync(new Role("employee"));
         }
-        if (!(await rolesManager.RoleExistsAsync("admin")))
+        if (!(await roleManager.RoleExistsAsync("admin")))
         {
-            await rolesManager.CreateAsync(new IdentityRole("admin"));
+            await roleManager.CreateAsync(new Role("admin"));
         }
-        if (!(await rolesManager.RoleExistsAsync("moderator")))
+        if (!(await roleManager.RoleExistsAsync("moderator")))
         {
-            await rolesManager.CreateAsync(new IdentityRole("moderator"));
+            await roleManager.CreateAsync(new Role("moderator"));
         }
     }
     catch (Exception ex)
@@ -74,6 +87,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -82,6 +97,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

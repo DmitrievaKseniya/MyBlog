@@ -1,0 +1,32 @@
+﻿@model MyBlog.BLL.ViewModels.RolesListViewModel[];
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<h3>Все роли</h3>
+<a class="text-primary text-decoration-none" asp-area="" asp-controller="Role" asp-action="NewRolePage">Добавить роль</a>
+<br />
+<div class="row gy-2">
+    @foreach (var role in Model)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@role.RolesList.ToString()</h5>
+                <p class="card-text">@role.RolesList.Description</p>
+                <div class="row g-3">
+                    <div class="col-auto">
+                        <form method="get" asp-controller="Role" asp-action="GetRoleById" asp-route-id="@role.RolesList.Id">
+                            <button class="btn btn-outline-dark btn-sm">Изменить</button>
+                        </form>
+                    </div>
+                    <div class="col-auto">
+                        <form method="post" asp-controller="Role" asp-action="DeleteRole" asp-route-id="@role.RolesList.Id">
+                            <button class="btn btn-outline-danger btn-sm">Удалить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
