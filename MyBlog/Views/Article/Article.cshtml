@@ -15,19 +15,24 @@
 <div class="text-end text-secondary border-top">
     Автор: @Model.Article.Author.Email
 </div>
-@* <h4>Комментарии к статье</h4>
+<h6>Комментарии к статье</h6>
 <div>
     @foreach (var comment in Model.Comments)
     {
-        <input type="text" readonly class="form-control-plaintext" value="@comment.Text">
-        <div class="text-end text-secondary border-top">
-            Автор: @comment.Author.Email
+        <div class="border-top border-bottom mb-3 mt-3">
+            <div class="text-secondary">
+                @comment.Author.Email
+            </div>
+            <input type="text" readonly class="form-control-plaintext" value="@comment.Text">
         </div>
     }
 </div>
 <div>
     @{
-        Html.Partial("NewComment", Model.NewCommentVM);
+        @if (User.Identity!.IsAuthenticated)
+        {
+            Html.RenderPartial("NewComment", Model.NewCommentVM);
+        }
     }
-</div> *@
-<a class="link-primary text-decoration-none" asp-area="" asp-controller="Article" asp-action="GetAllArticle">Перейти к списку всех статей</a>
+</div>
+<a class="link-primary text-decoration-none mb-3 mt-3" asp-area="" asp-controller="Article" asp-action="GetAllArticle">Перейти к списку всех статей</a>

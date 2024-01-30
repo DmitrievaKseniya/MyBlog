@@ -25,7 +25,6 @@ namespace MyBlog.WebService.Controllers
             _repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
         }
 
-        [Route("ViewArticle")]
         [HttpGet]
         public async Task<IActionResult> ViewArticle(int id)
         {
@@ -41,11 +40,18 @@ namespace MyBlog.WebService.Controllers
             var comments = await repostoryComments.GetByArticleId(id);
 
             model.Comments = comments;
-            model.NewCommentVM = new CommentNewViewModel()
+            if (resultUser != null)
             {
-                IdUser = resultUser.Id,
-                IdArticle = id
-            };
+                model.NewCommentVM = new CommentNewViewModel()
+                {
+                    IdUser = resultUser.Id,
+                    IdArticle = id
+                };
+            }
+            else
+            {
+                model.NewCommentVM = new CommentNewViewModel();
+            }
 
             return View("Article", model);
         }

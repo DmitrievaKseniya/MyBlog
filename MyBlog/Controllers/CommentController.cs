@@ -37,7 +37,7 @@ namespace MyBlog.WebService.Controllers
             };
             await repository.Create(item);
 
-            return RedirectToAction("ViewArticle", "Article");
+            return RedirectToAction("ViewArticle", "Article", new {id = newComment.IdArticle});
         }
 
         [Route ("UpdateComment")]
@@ -50,9 +50,7 @@ namespace MyBlog.WebService.Controllers
 
                 comment.Convert(model);
 
-                var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
-
-                await repository.Update(comment);
+                await _repository.Update(comment);
 
                 return View();
 
@@ -70,9 +68,7 @@ namespace MyBlog.WebService.Controllers
         {
             var comment = await GetCommentByIdRep(id);
 
-            var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
-
-            repository.Delete(comment);
+            _repository.Delete(comment);
 
             return View();
         }
@@ -80,10 +76,9 @@ namespace MyBlog.WebService.Controllers
         [Route ("GetAllComments")]
         [HttpGet]
         public async Task<IActionResult> GetAllComments()
-        {
-            var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
+        { 
 
-            var comments = repository.GetAll();
+            var comments = _repository.GetAll();
 
             return View(comments);
         }
@@ -98,10 +93,8 @@ namespace MyBlog.WebService.Controllers
         }
 
         public async Task<Comment> GetCommentByIdRep(int id)
-        {
-            var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
-
-            return await repository.Get(id);
+        { 
+            return await _repository.Get(id);
         }
 
         public async Task<List<Comment>> GetCommentsByArticleId(int id)
