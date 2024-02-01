@@ -20,7 +20,7 @@ namespace MyBlog.BLL.ViewModels
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Поле Email обязательно для заполнения")]
-        [EmailAddress]
+        [EmailAddress (ErrorMessage = "Некорректный email")]
         [Display(Name = "Email", Prompt = "example.com")]
         public string EmailReg { get; set; }
 

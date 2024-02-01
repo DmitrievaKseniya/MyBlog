@@ -1,7 +1,7 @@
 ﻿@model MyBlog.BLL.ViewModels.CommentNewViewModel
 
 <form method="post" asp-controller="Comment" asp-action="NewComment">
-    <div asp-validation-summary="ModelOnly"></div>
+    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
     <input type="hidden" asp-for="IdUser">
     <input type="hidden" asp-for="IdArticle">
     <div class="mb-3">

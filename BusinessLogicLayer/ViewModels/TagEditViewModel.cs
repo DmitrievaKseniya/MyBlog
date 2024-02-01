@@ -14,6 +14,7 @@ namespace MyBlog.BLL.ViewModels
         [Display(Name = "ИД тега", Prompt = "Введите ИД тега")]
         public int IdTag { get; set; }
 
+        [Required (ErrorMessage = "Поле Название обязательно для заполнения")]
         [DataType(DataType.Text)]
         [Display(Name = "Название тега", Prompt = "Укажите название")]
         public string Name { get; set; }

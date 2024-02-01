@@ -97,6 +97,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+//надо загуглить
+app.UseDeveloperExceptionPage();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -7,6 +7,7 @@ using MyBlog.WebService.Extentions;
 
 namespace MyBlog.WebService.Controllers
 {
+    [Route("[controller]/[action]")]
     public class RoleController : Controller
     {
         private readonly RoleManager<Role> _roleManager;
@@ -17,7 +18,6 @@ namespace MyBlog.WebService.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        [Route("GetAllRoles")]
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -51,7 +51,6 @@ namespace MyBlog.WebService.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        [Route("UpdateRole")]
         [HttpPost]
         public async Task<IActionResult> UpdateRole(RoleEditViewModel model)
         {
@@ -68,18 +67,17 @@ namespace MyBlog.WebService.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("GetRoleById", "Role");
+                    ModelState.AddModelError("", "Некорректные данные");
                 }
             }
             else
             {
                 ModelState.AddModelError("", "Некорректные данные");
-                return View("Edit", model);
             }
+            return View(model);
         }
 
         [Authorize(Roles = "admin")]
-        [Route("NewRolePage")]
         [HttpGet]
         public async Task<IActionResult> NewRolePage()
         {
@@ -89,7 +87,6 @@ namespace MyBlog.WebService.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        [Route("NewRole")]
         [HttpPost]
         public async Task<IActionResult> NewRole(RoleNewViewModel newRole)
         {
@@ -102,12 +99,11 @@ namespace MyBlog.WebService.Controllers
             else
             {
                 ModelState.AddModelError("", "Такая роль уже есть");
-                return View("Edit");
+                return View(newRole);
             }
         }
 
         [Authorize(Roles = "admin")]
-        [Route("DeleteRole")]
         [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
         {

@@ -101,7 +101,7 @@ namespace MyBlog.WebService.Controllers
                     }
                 }
             }
-            return RedirectToAction("Index", "Home");
+            return View(model);
         }
 
         [Authorize(Roles = "admin")]
@@ -148,7 +148,7 @@ namespace MyBlog.WebService.Controllers
                     }
                 }
             }
-            return RedirectToAction("NewUserPage", "User");
+            return View(model);
         }
 
         [Authorize]
@@ -221,14 +221,16 @@ namespace MyBlog.WebService.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Edit", "User");
+                    ModelState.AddModelError("", "Некорректные данные");
                 }
             }
             else
             {
                 ModelState.AddModelError("", "Некорректные данные");
-                return View("Edit", model);
             }
+
+            model.AllRoles = _roleManager.Roles.ToList();
+            return View("Edit", model);
         }
 
         [Authorize(Roles = "admin")]
@@ -268,14 +270,16 @@ namespace MyBlog.WebService.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("EditUser", "User");
+                    ModelState.AddModelError("", "Некорректные данные");
                 }
             }
             else
             {
                 ModelState.AddModelError("", "Некорректные данные");
-                return View("Edit", model);
             }
+
+            model.AllRoles = _roleManager.Roles.ToList();
+            return View("EditUser", model);
         }
 
         [Authorize]
@@ -346,7 +350,7 @@ namespace MyBlog.WebService.Controllers
                     ModelState.AddModelError("", "Неправильный логин и (или) пароль");
                 }
             }
-            return RedirectToAction("Index", "Home");
+            return View(model);
         }
 
         public async Task<IActionResult> Logout()

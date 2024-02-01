@@ -14,6 +14,7 @@ namespace MyBlog.BLL.ViewModels
         [Display(Name = "ИД комментария", Prompt = "Введите ИД комментария")]
         public int IdComment { get; set; }
 
+        [Required(ErrorMessage = "Нельзя оставить пустой комментарий")]
         [DataType(DataType.Text)]
         [Display(Name = "Комментарий", Prompt = "Напишите комментарий")]
         public string? Text { get; set; }

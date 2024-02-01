@@ -57,15 +57,23 @@ namespace MyBlog.WebService.Controllers
         }
 
         [Authorize]
-        [Route("NewArticle")]
         [HttpPost]
         public async Task<IActionResult> NewArticle(ArticleNewViewModel newArticle)
         {
+            var repositiryTag = _unitOfWork.GetRepository<Tag>() as TagRepository;
+
+            if ((newArticle.SelectedIdTags == null) || (newArticle.SelectedIdTags.Count() == 0))
+            {
+                var AllTags = await repositiryTag.GetAll();
+                newArticle.AllTags = AllTags;
+
+                ModelState.AddModelError("", "Необходимо выбрать хотя бы один тег, к которому будет относиться статья");
+                return View(newArticle);
+            }
+
             var thisUser = User;
 
             var result = await _userManager.GetUserAsync(thisUser);
-
-            var repositiryTag = _unitOfWork.GetRepository<Tag>() as TagRepository;
 
             var selectedTags = new List<Tag>();
             foreach (int idTag in newArticle.SelectedIdTags)
@@ -88,7 +96,6 @@ namespace MyBlog.WebService.Controllers
         }
 
         [Authorize]
-        [Route("NewArticlePage")]
         [HttpGet]
         public async Task<IActionResult> NewArticlePage()
         {
@@ -109,15 +116,26 @@ namespace MyBlog.WebService.Controllers
             return View("NewArticle", model);
         }
 
-        [Route("UpdateArticle")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateArticle(ArticleEditViewModel model)
         {
+            var repositiryTag = _unitOfWork.GetRepository<Tag>() as TagRepository;
+
+            if ((model.SelectedIdTags == null) || (model.SelectedIdTags.Count() == 0))
+            {
+                var AllTags = await repositiryTag.GetAll();
+
+                model.SelectedTags = new List<Tag>();
+                model.AllTags = AllTags;
+
+                ModelState.AddModelError("", "Необходимо выбрать хотя бы один тег, к которому будет относиться статья");
+                return View("EditArticle", model);
+            }
+
             if (ModelState.IsValid)
             {
                 var article = await GetArticleById(model.IdArticle);
-
-                var repositiryTag = _unitOfWork.GetRepository<Tag>() as TagRepository;
 
                 var selectedTags = new List<Tag>();
                 foreach (int idTag in model.SelectedIdTags)
@@ -134,7 +152,7 @@ namespace MyBlog.WebService.Controllers
             else
             {
                 ModelState.AddModelError("", "Некорректные данные");
-                return View("Edit", model);
+                return View("EditArticle", model);
             }
         }
 
@@ -166,7 +184,6 @@ namespace MyBlog.WebService.Controllers
 
         }
 
-        [Route("DeleteArticle")]
         [HttpPost]
         public async Task<IActionResult> DeleteArticle(int id)
         {
@@ -192,7 +209,6 @@ namespace MyBlog.WebService.Controllers
             return View("ArticlesList", model);
         }
 
-        [Route ("GetArticleByUserId")]
         [HttpGet]
         public async Task<IActionResult> GetArticleByUserId(string userId)
         {

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MyBlog.WebService.Controllers
 {
+    [Route("[controller]/[action]")]
     public class TagController : Controller
     {
         private IUnitOfWork _unitOfWork;
@@ -20,7 +21,6 @@ namespace MyBlog.WebService.Controllers
         }
 
         [Authorize(Roles = "moderator, admin")]
-        [Route ("NewTag")]
         [HttpPost]
         public async Task<IActionResult> NewTag(TagNewViewModel newTag)
         {
@@ -34,7 +34,6 @@ namespace MyBlog.WebService.Controllers
         }
 
         [Authorize(Roles = "moderator, admin")]
-        [Route ("NewTagPage")]
         [HttpGet]
         public async Task<IActionResult> NewTagPage()
         {
@@ -44,7 +43,6 @@ namespace MyBlog.WebService.Controllers
         }
 
         [Authorize(Roles = "moderator, admin")]
-        [Route ("UpdateTag")]
         [HttpPost]
         public async Task<IActionResult> UpdateTag(TagEditViewModel model)
         {
@@ -62,12 +60,11 @@ namespace MyBlog.WebService.Controllers
             else
             {
                 ModelState.AddModelError("", "Некорректные данные");
-                return View("Edit", model);
+                return View(model);
             }
         }
 
         [Authorize(Roles = "moderator, admin")]
-        [Route ("DeleteTag")]
         [HttpPost]
         public async Task<IActionResult> DeleteTag(int id)
         {
@@ -79,7 +76,6 @@ namespace MyBlog.WebService.Controllers
         }
 
         [Authorize(Roles = "moderator, admin")]
-        [Route("GetAllTags")]
         [HttpGet]
         public async Task<IActionResult> GetAllTags()
         {

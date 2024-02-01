@@ -6,8 +6,9 @@
 
 <h3>Редактирование профиля пользователя</h3>
 <form method="post" asp-controller="User" asp-action="UpdateFromUserList">
-    <div asp-validation-summary="ModelOnly"></div>
+    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
     <input type="hidden" asp-for="UserId">
+    <input type="hidden" asp-for="AllRoles">
     <div class="mb-3">
         @foreach (var role in Model.AllRoles)
         {

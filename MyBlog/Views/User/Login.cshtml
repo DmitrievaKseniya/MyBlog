@@ -8,9 +8,11 @@
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.10/jquery.validate.unobtrusive.min.js"></script>
 
 <form method="post" asp-controller="User" asp-action="Login">
+    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
     <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Электронный адрес</label>
         <input asp-for="Email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">Пароль</label>

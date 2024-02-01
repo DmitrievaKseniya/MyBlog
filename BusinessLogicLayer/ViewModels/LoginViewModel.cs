@@ -10,7 +10,7 @@ namespace MyBlog.BLL.ViewModels
     public class LoginViewModel
     {
         [Required(ErrorMessage = "Поле Email обязательно для заполнения")]
-        [EmailAddress]
+        [EmailAddress (ErrorMessage = "Некорректный email")]
         [Display(Name = "Email", Prompt = "Введите email")]
         public string Email { get; set; }
 

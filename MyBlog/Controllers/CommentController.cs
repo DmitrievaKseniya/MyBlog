@@ -8,6 +8,7 @@ using MyBlog.WebService.Extentions;
 
 namespace MyBlog.WebService.Controllers
 {
+    [Route("[controller]/[action]")]
     public class CommentController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -21,26 +22,32 @@ namespace MyBlog.WebService.Controllers
             _repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
         }
 
-        [Route ("NewComment")]
         [HttpPost]
         public async Task<IActionResult> NewComment(CommentNewViewModel newComment)
         {
-            var result = await _userManager.FindByIdAsync(newComment.IdUser);
-
-            var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
-
-            var item = new Comment()
+            if (ModelState.IsValid)
             {
-                Text = newComment.Text,
-                AuthorId = result.Id,
-                ArticleId = newComment.IdArticle
-            };
-            await repository.Create(item);
+                var result = await _userManager.FindByIdAsync(newComment.IdUser);
 
-            return RedirectToAction("ViewArticle", "Article", new {id = newComment.IdArticle});
+                var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
+
+                var item = new Comment()
+                {
+                    Text = newComment.Text,
+                    AuthorId = result.Id,
+                    ArticleId = newComment.IdArticle
+                };
+                await repository.Create(item);
+
+                return RedirectToAction("ViewArticle", "Article", new { id = newComment.IdArticle });
+            }
+            else
+            {
+                ModelState.AddModelError("", "Некорректные данные");
+            }
+            return View(newComment);
         }
 
-        [Route ("UpdateComment")]
         [HttpPost]
         public async Task<IActionResult> UpdateComment(CommentEditViewModel model)
         {
@@ -58,11 +65,10 @@ namespace MyBlog.WebService.Controllers
             else
             {
                 ModelState.AddModelError("", "Некорректные данные");
-                return View("Edit", model);
+                return View(model);
             }
         }
 
-        [Route ("DeleteComment")]
         [HttpPost]
         public async Task<IActionResult> DeleteComment(int id)
         {
@@ -73,7 +79,6 @@ namespace MyBlog.WebService.Controllers
             return View();
         }
 
-        [Route ("GetAllComments")]
         [HttpGet]
         public async Task<IActionResult> GetAllComments()
         { 
@@ -83,7 +88,6 @@ namespace MyBlog.WebService.Controllers
             return View(comments);
         }
 
-        [Route ("GetCommentById")]
         [HttpGet]
         public async Task<IActionResult> GetCommentById(int id)
         {
