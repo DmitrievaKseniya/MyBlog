@@ -5,12 +5,12 @@ using System.Text;
 
 namespace MyBlog.WebService.Middlewares
 {
-    public class LM
+    public class LogMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<LM> _logger;
+        private readonly ILogger<LogMiddleware> _logger;
 
-        public LM(RequestDelegate next, ILogger<LM> logger)
+        public LogMiddleware(RequestDelegate next, ILogger<LogMiddleware> logger)
         {
             this._next = next;
             _logger = logger;

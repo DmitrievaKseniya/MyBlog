@@ -54,7 +54,7 @@ var loggerFactory
     = new LoggerFactory(new[] { new NLogLoggerProvider() });
 
 string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connection).UseLoggerFactory(loggerFactory))
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connection))
     .AddUnitOfWork()
         .AddCustomRepository<Article, ArticleRepository>()
         .AddCustomRepository<Comment, CommentRepository>()
@@ -113,7 +113,7 @@ app.UseDeveloperExceptionPage();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<LM>();
+app.UseMiddleware<LogMiddleware>();
 
 app.MapControllerRoute(
     name: "default",
