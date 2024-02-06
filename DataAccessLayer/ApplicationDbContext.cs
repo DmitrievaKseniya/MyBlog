@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MyBlog.BLL.Models;
+using NLog;
+
 namespace MyBlog.DAL
 {
     public class ApplicationDbContext : IdentityDbContext<User, Role, string>

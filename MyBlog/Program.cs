@@ -9,11 +9,19 @@ using Microsoft.Extensions.Hosting;
 using MyBlog.WebService.Extentions;
 using MyBlog.DAL.Repository;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging.Console;
+using NLog.Extensions.Logging;
+using NLog.Web;
+using NLog;
+using MyBlog.WebService.Middlewares;
+
+var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Host.UseNLog();
 
 var mapperConfig = new MapperConfiguration((v) =>
 {
@@ -42,8 +50,11 @@ builder.Services.ConfigureApplicationCookie(optons =>
 
 builder.Services.AddSingleton(mapper);
 
+var loggerFactory
+    = new LoggerFactory(new[] { new NLogLoggerProvider() });
+
 string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connection))
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connection).UseLoggerFactory(loggerFactory))
     .AddUnitOfWork()
         .AddCustomRepository<Article, ArticleRepository>()
         .AddCustomRepository<Comment, CommentRepository>()
@@ -74,8 +85,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
+        logger.Error(ex, "An error occurred while seeding the database.");
     }
 }
 
@@ -102,6 +112,8 @@ app.UseDeveloperExceptionPage();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<LM>();
 
 app.MapControllerRoute(
     name: "default",
