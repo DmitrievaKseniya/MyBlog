@@ -148,6 +148,7 @@ namespace MyBlog.WebService.Controllers
                     }
                 }
             }
+            model.AllRoles = _roleManager.Roles.ToList();
             return View(model);
         }
 

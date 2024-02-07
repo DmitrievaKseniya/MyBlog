@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using MyBlog.BLL.Models;
+using System.Net.Http;
 using System.Text;
 
 namespace MyBlog.WebService.Middlewares
@@ -24,7 +25,7 @@ namespace MyBlog.WebService.Middlewares
             var buffer = new byte[Convert.ToInt32(request.ContentLength)];
             await request.Body.ReadAsync(buffer, 0, buffer.Length);
             //get body string here...
-            var requestContent = Encoding.UTF8.GetString(buffer);
+            var requestBody = Encoding.UTF8.GetString(buffer);
             request.Body.Position = 0;  //rewinding the stream to 0
 
             var resultUser = await userManager.GetUserAsync(context.User);
@@ -35,7 +36,7 @@ namespace MyBlog.WebService.Middlewares
                 paramString += $"{param.Key} = {request.Query[param.Key]}; ";
             }
 
-            var textLog = $"Запрос: {request.Path}\nТело запроса: {requestContent}\nПараметры запроса: {paramString}\nМетод: {request.Method}\n";
+            var textLog = $"Запрос: {request.Path}\nТело запроса: {requestBody}\nПараметры запроса: {paramString}\nМетод: {request.Method}\n";
 
             if (resultUser != null)
             {
@@ -43,15 +44,28 @@ namespace MyBlog.WebService.Middlewares
             }
 
             _logger.LogInformation(textLog);
+
+            HttpResponse response = context.Response;
+            var originalResponseBody = response.Body;
+            using var newResponseBody = new MemoryStream();
+            response.Body = newResponseBody;
+
             try
             {
                 await _next.Invoke(context);
-                _logger.LogInformation("Запрос успешно обработан!");
             }
             catch (Exception ex)
             {
                 _logger.LogError($"ОШИБКА {ex.Message}\n{ex.StackTrace}\n{textLog}");
             }
+
+            newResponseBody.Seek(0, SeekOrigin.Begin);
+            var responseBodyText = await new StreamReader(response.Body).ReadToEndAsync();
+
+            newResponseBody.Seek(0, SeekOrigin.Begin);
+            await newResponseBody.CopyToAsync(originalResponseBody);
+
+            _logger.LogInformation($"Статус ответа: {response.StatusCode}\nОтвет: {responseBodyText}");
         }
     }
 }
