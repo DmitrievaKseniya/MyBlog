@@ -14,6 +14,7 @@ using NLog.Extensions.Logging;
 using NLog.Web;
 using NLog;
 using MyBlog.WebService.Middlewares;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -89,6 +90,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.Environment.EnvironmentName = "Production";
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -96,8 +99,12 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+else
+{
+    app.UseDeveloperExceptionPage();
+}
 
-app.UseStatusCodePagesWithReExecute("/Error/{0}");
+app.UseStatusCodePagesWithRedirects("/Error/{0}");
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -106,9 +113,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-//надо загуглить
-app.UseDeveloperExceptionPage();
 
 app.UseAuthentication();
 app.UseAuthorization();

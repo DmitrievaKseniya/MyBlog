@@ -23,31 +23,27 @@ namespace MyBlog.WebService.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
         [HttpGet]
         public IActionResult ErrorForbidden()
         {
             return View("ErrorForbidden");
         }
 
+        public IActionResult Error()
+        {
+            return View("OtherError");
+        }
+
         [Route("Error/{statusCode}")]
         [HttpGet]
         public IActionResult Error(int statusCode)
         {
-            if (statusCode == 403)
+            return statusCode switch
             {
-                return View("ErrorForbidden");
-            }
-            if (statusCode == 404)
-            {
-                return View("404");
-            }
-            return View("OtherError");
+                403 => View("ErrorForbidden"),
+                404 => View("404"),
+                _ => View("OtherError")
+            };
         }
     }
 }

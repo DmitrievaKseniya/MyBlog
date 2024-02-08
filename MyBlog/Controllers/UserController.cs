@@ -120,6 +120,7 @@ namespace MyBlog.WebService.Controllers
         [HttpPost]
         public async Task<IActionResult> NewUser(UserNewViewModel model)
         {
+            throw new Exception("JOPA");
             if (ModelState.IsValid)
             {
                 var user = _mapper.Map<User>(model);
