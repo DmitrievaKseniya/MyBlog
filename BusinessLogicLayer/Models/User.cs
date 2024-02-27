@@ -14,6 +14,8 @@ namespace MyBlog.BLL.Models
         public string? MiddleName { get; set; }
         public DateTime BirthDate { get; set; }
 
+        public ICollection<UserRole> UserRoles { get; set; }
+
         public string GetFullName()
         {
             return LastName + " " + FirstName + " " + MiddleName;

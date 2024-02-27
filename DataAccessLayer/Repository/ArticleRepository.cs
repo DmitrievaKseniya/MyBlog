@@ -29,7 +29,7 @@ namespace MyBlog.DAL.Repository
 
         public async override Task<Article> Get(int id)
         {
-            var article = Set.Include(x => x.Author).Include(x => x.Tags).FirstAsync(x => x.Id == id);
+            var article = Set.Include(x => x.Author).Include(x => x.Tags).FirstOrDefaultAsync(x => x.Id == id);
 
             return await article;
         }

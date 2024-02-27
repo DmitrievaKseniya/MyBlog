@@ -27,9 +27,16 @@ namespace MyBlog.DAL.Repository
             return await comments;
         }
 
+        public async Task<List<Comment>> GetByUserId(string id)
+        {
+            var comments = Set.Include(x => x.Article).Where(x => x.AuthorId == id).ToListAsync();
+
+            return await comments;
+        }
+
         public async override Task<Comment> Get(int id)
         {
-            var comment = Set.Include(x => x.Author).Include(x => x.Article).FirstAsync(x => x.Id == id);
+            var comment = Set.Include(x => x.Author).Include(x => x.Article).FirstOrDefaultAsync(x => x.Id == id);
 
             return await comment;
         }
